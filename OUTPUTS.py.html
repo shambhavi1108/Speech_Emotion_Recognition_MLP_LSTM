@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import os # to use operating system dependent functionality
+import librosa # to extract speech features
+import wave # read and write WAV files
+import matplotlib.pyplot as plt # to generate the visualizations
+
+# MLP Classifier
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
+
+# LSTM Classifier
+import keras
+from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import *
+from keras.optimizers import rmsprop
+
+
+# In[2]:
+
+
+from tqdm import tqdm
+
+
+# In[14]:
+
+
+import librosa
+import librosa.display
+
+
+# In[25]:
+
+
+data, sampling_rate = librosa.load('/Users/shambhavisharma/Downloads/ravdess-emotional-speech-audio/Actor_06/03-01-01-01-02-02-06.wav')
+
+
+# In[26]:
+
+
+import os
+import pandas as pd
+import librosa
+import glob 
+
+plt.figure(figsize=(15, 5))
+librosa.display.waveplot(data, sr=sampling_rate)
+
+
+# In[27]:
+
+
+import matplotlib.pyplot as plt
+import scipy.io.wavfile
+import numpy as np
+import sys
+
+
+sr,x = scipy.io.wavfile.read('/Users/shambhavisharma/Downloads/ravdess-emotional-speech-audio/Actor_06/03-01-01-01-02-02-06.wav')
+
+## Parameters: 10ms step, 30ms window
+nstep = int(sr * 0.01)
+nwin  = int(sr * 0.03)
+nfft = nwin
+
+window = np.hamming(nwin)
+
+## will take windows x[n1:n2].  generate
+## and loop over n2 such that all frames
+## fit within the waveform
+nn = range(nwin, len(x), nstep)
+
+X = np.zeros( (len(nn), nfft//2) )
+
+for i,n in enumerate(nn):
+    xseg = x[n-nwin:n]
+    z = np.fft.fft(window * xseg, nfft)
+    X[i,:] = np.log(np.abs(z[:nfft//2]))
+
+plt.imshow(X.T, interpolation='nearest',
+    origin='lower',
+    aspect='auto')
+
+plt.show()
+
+
+# In[ ]:
+
+
+
+
